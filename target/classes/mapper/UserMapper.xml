@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 名空间，对应当前dao的全限定了类名-->
+<mapper namespace="com.qf.dao.UserDao">
+
+    <!--手动映射
+    id 表示resultMap的唯一标识
+    type 映射的对象
+    column 代表数据库的列名
+    property 代表实体类的属性名
+-->
+    <resultMap id="BaseResult" type="com.qf.pojo.User">
+        <!--声明主键对应-特别声明-->
+        <id column="id" property="id"></id>
+        <!--设置其他字段-->
+        <result column="user_name" property="userName"></result>
+        <result column="pass_word" property="passWord"></result>
+        <result column="birth" property="birth"></result>
+    </resultMap>
+    
+    <!-- id 对应方法名 resultType 对应返回值类型-->
+    <select id="findAll" resultType="com.qf.pojo.User" resultMap="BaseResult">
+        select * from users
+    </select>
+
+    <!--parameterType传入的参数类型-->
+    <select id="findById" resultMap="BaseResult">
+        /*select * from users where id = ${id}*/
+        select * from users where id = #{id}
+    </select>
+
+    <!--模糊查询-->
+    <select id="findByIdAndName" resultMap="BaseResult">
+        select * from users where user_name like concat('%',#{userName},'%') and id = #{id}
+    </select>
+
+    <!--
+        1.注解传参 @Param()，（）中的内容与sul语句中#{}中的内容一致
+        2.使用下标获取参数, #{arg[0]},arg从0开始，#{param1}，#{param2} param从1开始
+        3.通过对象进行传参，select标签中介入一个属性parameterType=“对象的全限定类名，#{user.id}”
+        4.通过map进行传参，#{}中得值就是map的key
+    -->
+    <select id="findByIdAndUserName" resultType="com.qf.pojo.User">
+        select * from users where id = #{id} and u_name = #{username}
+    </select>
+
+    <!--删除一个用户-->
+    <delete id="deleteById">
+        delete from users where id = #{id}
+    </delete>
+
+    <!--添加用户-->
+    <insert id="addUser" parameterType="user">
+        insert into users (user_name,pass_word) values (#{userName},#{passWord})
+    </insert>
+
+    <!--添加用户并获取id-->
+    <!--
+        useGeneratedKeys 默认为false 改为true 表示 新增成功后将id返回
+        keyProperty  id的标识
+
+        第一种获取到新增用户id的方式
+        <selectKey keyProperty="id" resultType="int" order="AFTER">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+    -->
+    <insert id="insertGetId" parameterType="user" useGeneratedKeys="true" keyProperty="id">
+        insert into users (user_name,pass_word) values (#{userName},#{passWord})
+    </insert>
+
+    <!--更新 修改-->
+    <update id="updateById" parameterType="user">
+        update users set user_name = #{userName}, pass_word = #{passWord} where id = #{id}
+    </update>
+</mapper>

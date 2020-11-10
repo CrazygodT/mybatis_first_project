@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<!-- mybatis配置-->
+<configuration>
+
+    <!--加载数据库连接信息的资源文件，放置在configuration最上方-->
+    <properties resource="db.properties"></properties>
+    <!--配置别名-->
+    <typeAliases>
+        <!--配置单个实体类 type 是全限定类名 alias 是别名-->
+        <!--<typeAlias type="com.qf.pojo.User" alias="user"></typeAlias>-->
+        <!--直接给一个包下面的所有实体类生成别名 name 是要生成别名的全限定包名，默认的别名是类名首字母小写-->
+        <package name="com.qf.pojo"></package>
+    </typeAliases>
+    <!--当前选中的环境-->
+    <environments default="development">
+        <!--当前环境的数据库配置-->
+        <environment id="development">
+            <!--事物管理-->
+            <transactionManager type="JDBC"/>
+            <!--数据源配置-->
+            <dataSource type="POOLED">
+                <property name="driver" value="${driver}"/>
+                <!--& 得转义 &amp-->
+                <property name="url" value="${url}"/>
+                <property name="username" value="${username}"/>
+                <property name="password" value="${password}"/>
+            </dataSource>
+        </environment>
+    </environments>
+
+    <mappers>
+        <mapper resource="mapper/UserMapper.xml"/>
+    </mappers>
+</configuration>
